@@ -1,0 +1,20 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        // 输出
+        "noEmit": false,
+        "outDir": "dist",
+        "ignoreDeprecations": "6.0",
+
+        // 生成类型
+        "declaration": true,
+        "declarationMap": true,
+
+        // 源码映射
+        "sourceMap": true,
+
+        // 必须保持 NodeNext（关键）
+        "module": "NodeNext",
+        "moduleResolution": "NodeNext"
+    }
+}

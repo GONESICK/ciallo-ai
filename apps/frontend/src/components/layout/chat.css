@@ -1,0 +1,11 @@
+.scrollbar-none {
+    scrollbar-width: none;
+    display: box;
+    box-orient: vertical;
+    line-clamp: 2;
+    text-overflow: ellipsis;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+    display: none;
+}

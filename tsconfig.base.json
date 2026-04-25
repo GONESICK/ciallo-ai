@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "baseUrl": ".",
+    "paths": {
+      "@repo/shared": ["packages/shared/src"],
+      "@repo/shared/*": ["packages/shared/src/*"],
+      "@repo/frontend": ["apps/frontend/src"],
+      "@repo/frontend/*": ["apps/frontend/src/*"],
+      "@repo/backend": ["packages/backend/src"],
+      "@repo/backend/*": ["packages/backend/src/*"]
+    },
+    "strict": true
+  }
+}

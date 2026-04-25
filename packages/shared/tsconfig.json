@@ -1,0 +1,30 @@
+{
+    "compilerOptions": {
+        // 基础
+        "target": "ES2020",
+        "module": "NodeNext",
+        "moduleResolution": "NodeNext",
+
+        // 路径
+        "rootDir": "src",
+        "baseUrl": ".",
+
+        // 类型
+        "strict": true,
+        "skipLibCheck": true,
+
+        // ESM 关键
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+
+        // 不输出（开发态）
+        "noEmit": true,
+
+        // 让 TS 识别 .js import（关键！）
+        "allowImportingTsExtensions": false,
+
+        // JSON
+        "resolveJsonModule": true
+    },
+    "include": ["src"]
+}
