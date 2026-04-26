@@ -14,7 +14,7 @@ export default function ChatPage() {
     const params = useParams();
     const id = params.id || '';
 
-    const { tempMessage, setTempMessage, addMessage } = useMessageStore(
+    const { tempMessage, setTempMessage } = useMessageStore(
         useShallow((s) => ({
             tempMessage: s.tempMessage,
             setTempMessage: s.setTempMessage,
