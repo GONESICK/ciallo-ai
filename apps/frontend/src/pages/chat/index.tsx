@@ -35,7 +35,12 @@ export default function ChatPage() {
 
     const getDetail = async () => {
         const { data } = await messageDetail(id);
-        addMessage(id, data);
+        useMessageStore.setState((state) => ({
+            messages: {
+                ...state.messages,
+                [id]: data,
+            },
+        }));
     };
 
     useEffect(() => {
@@ -68,7 +73,7 @@ export default function ChatPage() {
                 setTempMessage(null);
             }
         });
-    }, []);
+    }, [id]);
 
     return (
         <div className="flex w-full flex-1 h-full">
