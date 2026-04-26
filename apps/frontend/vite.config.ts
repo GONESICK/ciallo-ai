@@ -7,7 +7,16 @@ import path from 'path';
 export default defineConfig({
     plugins: [react(), tailwindcss()],
     resolve: {
-        alias: [{ find: '@', replacement: path.resolve(__dirname, 'src') }],
+        alias: [
+            { find: '@', replacement: path.resolve(__dirname, 'src') },
+            {
+                find: '@repo/shared',
+                replacement: path.resolve(
+                    __dirname,
+                    '../../packages/shared/src'
+                ),
+            },
+        ],
     },
     server: {
         proxy: {

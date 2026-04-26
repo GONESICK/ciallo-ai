@@ -147,13 +147,20 @@ export function parseEvent(ev: {
             });
             return content;
         }
-        case 'response.reasoning_summary_part.done': {
+        case 'response.output_item.added': {
             return { status: 'streaming' };
         }
+        // case 'response.reasoning_summary_part.done': {
+        //     return { status: 'streaming' };
+        // }
         case 'title': {
             return { title: data.title };
         }
         case 'response.completed': {
+            assembler.reset();
+            return { status: 'done' };
+        }
+        case 'error': {
             assembler.reset();
             return { status: 'done' };
         }

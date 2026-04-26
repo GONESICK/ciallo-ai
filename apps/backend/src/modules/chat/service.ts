@@ -38,7 +38,7 @@ export class ChatService {
                 responseType: 'stream',
                 data: {
                     stream: true,
-                    model: 'doubao-seed-2-0-pro-260215',
+                    model: 'deepseek-v3-2-251201',
                     thinking: {
                         type: 'disabled',
                     },
@@ -126,15 +126,34 @@ export class ChatService {
                             model: 'doubao-seed-2-0-pro-260215',
                             stream: true,
                             input,
+                            thinking: { type: 'disabled' },
                             previous_response_id,
                         }),
                     }
                 );
+                console.log('Fetch response received, status:', res.status);
+
+                if (!res.ok) {
+                    const errorText = await res.text();
+                    console.error('API Error:', res.status, errorText);
+                    hooks.onerror?.(
+                        new Error(`API error: ${res.status} - ${errorText}`)
+                    );
+                    return;
+                }
+
+                if (!res.body) {
+                    console.error('Response body is null');
+                    hooks.onerror?.(new Error('Response body is null'));
+                    return;
+                }
+
                 const reader = res.body.getReader();
                 const decoder = new TextDecoder();
                 const parser = createParser({
                     onEvent: (event: { event: string; data: string }) => {
                         if (event.data === '[DONE]') {
+                            console.log('Stream ended with [DONE]');
                             hooks.onclose?.(event);
                             try {
                                 const last = assembler.getResult();
@@ -164,20 +183,26 @@ export class ChatService {
                         }
                     },
                     onError: (error) => {
+                        console.error('Parser error:', error);
                         hooks.onerror?.(error);
                     },
                 });
                 try {
                     while (true) {
                         const { done, value } = await reader.read();
-                        if (done) break;
+                        if (done) {
+                            console.log('Reader done');
+                            break;
+                        }
                         const chunk = decoder.decode(value, { stream: true });
                         parser.feed(chunk);
                     }
                 } catch (error) {
+                    console.log('Reader error:', error);
                     hooks.onerror?.(error as Error);
                 }
             } catch (error) {
+                console.log('Error in sendRequest:', error);
                 hooks.onerror?.(error as Error);
             }
         }

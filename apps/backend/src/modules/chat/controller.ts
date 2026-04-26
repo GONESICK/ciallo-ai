@@ -189,8 +189,10 @@ export class ChatController {
         }
     ): Promise<any> {
         const { sessionId, input, previous_response_id } = body;
+        const MAX_CHARS = 8000; // 最大字数限制
         let assistant = '';
         let prd = null;
+        let exceeded = false;
         this.chatService.createMessage(sessionId, input[input.length - 1]);
         const sse = new HttpServerResponse(this.ctx).sse();
         const _this = this;
@@ -200,12 +202,26 @@ export class ChatController {
             previous_response_id,
             {
                 onmessage(e) {
+                    if (exceeded) return; // 已超限，忽略后续消息
+
                     if (e.event) {
                         sse.send({ event: e.event, data: e.data });
                         if (e.event === 'response.output_text.delta') {
                             assistant += e.data;
+                            // 检查字数限制
+                            if (assistant.length > MAX_CHARS) {
+                                exceeded = true;
+                                sse.send({
+                                    event: 'error',
+                                    data: {
+                                        message: `回复字数超过限制(${MAX_CHARS}字)`,
+                                    },
+                                });
+                                controller.abort();
+                                sse.end();
+                                return;
+                            }
                         }
-                        console.log(e.event);
                         if (e.event === 'response.created') {
                             prd = JSON.parse(e.data).response.id;
                             _this.saveResponseId(sessionId, prd);
@@ -215,6 +231,7 @@ export class ChatController {
                     }
                 },
                 onclose() {
+                    if (exceeded) return; // 已超限，不执行后续逻辑
                     try {
                         _this
                             .sseSendTitle(
@@ -232,12 +249,10 @@ export class ChatController {
                     }
                 },
                 onerror(err) {
-                    if (
-                        err &&
-                        'code' in err &&
-                        err.code !== 'ERR_STREAM_PREMATURE_CLOSE'
-                    ) {
+                    if (exceeded) return; // 已超限，忽略错误
+                    if (err) {
                         sse.sendError(err);
+                        controller?.abort();
                     }
                 },
             }

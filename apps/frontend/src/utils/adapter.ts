@@ -74,7 +74,6 @@ export function handleEvent(ev: EventSourceMessage, cid: string, mid: string) {
 
     // ✅ 不再区分，统一入队（保持顺序）
     eventQueue.push(result);
-
     if (scheduled) return;
     scheduled = true;
 
