@@ -253,6 +253,7 @@ export class ChatController {
                     if (err) {
                         sse.sendError(err);
                         controller?.abort();
+                        sse.end();
                     }
                 },
             }

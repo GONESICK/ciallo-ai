@@ -162,6 +162,7 @@ export function parseEvent(ev: {
         }
         case 'error': {
             assembler.reset();
+            alert(data.message || '未知错误');
             return { status: 'done' };
         }
         default:
