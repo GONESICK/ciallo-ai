@@ -67,12 +67,14 @@ export default function ChatPage() {
     };
 
     useEffect(() => {
-        getDetail().then(() => {
-            if (tempMessage) {
-                sendMessage([...tempMessage]);
-                setTempMessage(null);
+        if (tempMessage) {
+            sendMessage([...tempMessage]);
+            setTempMessage(null);
+        } else {
+            if (!list?.length) {
+                getDetail();
             }
-        });
+        }
     }, [id]);
 
     return (
