@@ -1,10 +1,13 @@
 import { useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { useSessionStore } from '@/store/sessionStore';
+import { useStreamStore } from '@/store';
 import { getConversation, deleteConversation } from '@/http/common';
 
 export default function Sider() {
     const sessions = useSessionStore((s) => s.sessions);
+    const loadingMap = useStreamStore((s) => s.loadingMap);
+    const stop = useStreamStore((s) => s.stop);
     const { setActive, deleteSession, addSession } = useSessionStore.getState();
     const sessionsList = useMemo(() => {
         const sessionsArray = Object.entries(sessions).map((m) => ({
@@ -28,6 +31,7 @@ export default function Sider() {
     const handleDelete = async (e: React.MouseEvent, id: string) => {
         e.stopPropagation();
         await deleteConversation(id);
+        stop(id);
         deleteSession(id);
 
         if (activeId === id) {
@@ -86,6 +90,9 @@ export default function Sider() {
                         <p className="text-gray-800 text-sm truncate flex-1">
                             {session.title}
                         </p>
+                        {loadingMap[session.id] && (
+                            <div className="w-4 h-4 mr-2 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
+                        )}
                         <button
                             className="opacity-0 group-hover:opacity-100 p-1 hover:bg-gray-300 rounded transition-opacity"
                             onClick={(e) => handleDelete(e, session.id)}
